@@ -187,6 +187,8 @@
             color: var(--cyan-bright);
             font-weight: bold;
             text-align: right;
+            word-break: break-all;
+            max-width: 60%;
         }
 
         /* Progreso / Barras */
@@ -376,7 +378,7 @@
         </div>
     </header>
 
-    <p id="connection-status" class="connect-alert">🎮 Por favor, conecta un control y presiona cualquier botón para iniciar...</p>
+    <p id="connection-status" class="connect-alert">🎮 Presiona cualquier botón para conectar el control...</p>
 
     <div class="tester-container" id="tester-ui" style="display: none;">
         
@@ -412,104 +414,4 @@
             <h2>Control Interactivo</h2>
             <div class="controller-visualizer">
                 <svg class="controller-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                    <path class="svg-body" d="M 150 100 C 50 100, 20 200, 50 350 C 70 450, 150 450, 220 350 C 250 300, 350 280, 400 280 C 450 280, 550 300, 580 350 C 650 450, 730 450, 750 350 C 780 200, 750 100, 650 100 Z" />
-                    
-                    <rect class="svg-trigger-bg" x="100" y="30" width="100" height="40" rx="10" />
-                    <rect id="svg-lt" class="svg-trigger-fill" x="100" y="70" width="100" height="0" rx="10" />
-                    <text x="150" y="20" fill="white" font-size="16" text-anchor="middle">LT</text>
-
-                    <rect class="svg-trigger-bg" x="600" y="30" width="100" height="40" rx="10" />
-                    <rect id="svg-rt" class="svg-trigger-fill" x="600" y="70" width="100" height="0" rx="10" />
-                    <text x="650" y="20" fill="white" font-size="16" text-anchor="middle">RT</text>
-
-                    <path id="svg-lb" class="svg-btn" d="M 120 75 Q 150 60 250 85 L 230 110 Q 150 90 120 100 Z" />
-                    <path id="svg-rb" class="svg-btn" d="M 680 75 Q 650 60 550 85 L 570 110 Q 650 90 680 100 Z" />
-
-                    <g transform="translate(260, 280)">
-                        <rect class="svg-btn" x="-15" y="-15" width="30" height="30" fill="#222" stroke="none"/>
-                        <path id="svg-dup" class="svg-btn" d="M -15 -15 L 15 -15 L 15 -50 Q 0 -60 -15 -50 Z" />
-                        <path id="svg-ddown" class="svg-btn" d="M -15 15 L 15 15 L 15 50 Q 0 60 -15 50 Z" />
-                        <path id="svg-dleft" class="svg-btn" d="M -15 -15 L -15 15 L -50 15 Q -60 0 -50 -15 Z" />
-                        <path id="svg-dright" class="svg-btn" d="M 15 -15 L 15 15 L 50 15 Q 60 0 50 -15 Z" />
-                    </g>
-
-                    <g transform="translate(600, 200)">
-                        <circle id="svg-b-y" class="svg-btn" cx="0" cy="-45" r="18" />
-                        <text x="0" y="-39" fill="white" font-size="18" text-anchor="middle" font-weight="bold">Y</text>
-
-                        <circle id="svg-b-a" class="svg-btn" cx="0" cy="45" r="18" />
-                        <text x="0" y="51" fill="white" font-size="18" text-anchor="middle" font-weight="bold">A</text>
-
-                        <circle id="svg-b-x" class="svg-btn" cx="-45" cy="0" r="18" />
-                        <text x="-45" y="6" fill="white" font-size="18" text-anchor="middle" font-weight="bold">X</text>
-
-                        <circle id="svg-b-b" class="svg-btn" cx="45" cy="0" r="18" />
-                        <text x="45" y="6" fill="white" font-size="18" text-anchor="middle" font-weight="bold">B</text>
-                    </g>
-
-                    <circle id="svg-home" class="svg-btn" cx="400" cy="150" r="20" />
-                    <rect id="svg-back" class="svg-btn" x="320" y="180" width="25" height="15" rx="5" />
-                    <rect id="svg-start" class="svg-btn" x="455" y="180" width="25" height="15" rx="5" />
-
-                    <g transform="translate(200, 180)">
-                        <circle class="svg-stick-base" cx="0" cy="0" r="50" />
-                        <circle id="svg-stick-l" class="svg-stick" cx="0" cy="0" r="35" />
-                        <circle id="svg-l3" class="svg-btn" cx="0" cy="0" r="10" fill="transparent" stroke="none" />
-                    </g>
-
-                    <g transform="translate(540, 300)">
-                        <circle class="svg-stick-base" cx="0" cy="0" r="50" />
-                        <circle id="svg-stick-r" class="svg-stick" cx="0" cy="0" r="35" />
-                        <circle id="svg-r3" class="svg-btn" cx="0" cy="0" r="10" fill="transparent" stroke="none" />
-                    </g>
-                </svg>
-            </div>
-            
-            <button class="btn-finish-test" onclick="finishTest()">Finalizar Prueba</button>
-        </div>
-    </div>
-
-    <div id="result-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 class="modal-title">Resultado del Diagnóstico</h2>
-            
-            <div id="modal-score-txt" class="modal-score">100%</div>
-            <div id="modal-status-txt" class="modal-status">🟢 EXCELENTE</div>
-            
-            <p id="modal-obs" style="color: #aaa; margin-bottom: 20px; font-size: 0.9rem;"></p>
-
-            <div class="modal-btns">
-                <button class="m-btn btn-pdf" onclick="generatePDF()">📄 Generar PDF</button>
-                <button class="m-btn btn-wa" onclick="sendToWorkshop()">📤 Enviar al Taller XE</button>
-                <button class="m-btn btn-close" onclick="closeModal()">❌ Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="pdf-report">
-        <div class="pdf-header">
-            <div style="flex-grow: 1;">
-                <h1>XE CONTROL TESTER PRO</h1>
-                <p>Reporte de Diagnóstico Oficial</p>
-            </div>
-            <div style="text-align: right;">
-                <strong id="pdf-date"></strong><br>
-                <span id="pdf-time"></span>
-            </div>
-        </div>
-
-        <div class="pdf-section">
-            <h3>Datos del Control</h3>
-            <div class="pdf-grid">
-                <div class="pdf-item"><span>Nombre:</span> <strong id="pdf-name">---</strong></div>
-                <div class="pdf-item"><span>Modelo / ID:</span> <strong id="pdf-id">---</strong></div>
-                <div class="pdf-item"><span>VID:</span> <strong id="pdf-vid">N/A</strong></div>
-                <div class="pdf-item"><span>PID:</span> <strong id="pdf-pid">N/A</strong></div>
-            </div>
-        </div>
-
-        <div class="pdf-section">
-            <h3>Métricas de Joysticks</h3>
-            <div class="pdf-grid">
-                <div class="pdf-item"><span>Drift Izquierdo (Máx Reposo):</span> <strong id="pdf-dl">0.0%</strong></div>
-                <div class="pdf-item"><span>Drift Derecho (Máx Reposo):</
+                    <path class="svg-body" d="M 150 100 C 50 100, 20 200, 50 350 C 70 450, 150 450, 220 350
