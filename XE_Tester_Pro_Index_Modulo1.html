@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>XE Tester Pro</title>
+<style>
+:root{--bg:#050505;--cyan:#00e5ff;--text:#fff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:var(--bg);color:var(--text);padding:24px}
+header{border:1px solid var(--cyan);border-radius:14px;padding:20px;text-align:center;box-shadow:0 0 20px rgba(0,229,255,.3)}
+h1{color:var(--cyan)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px}
+.card{border:1px solid #0aa;background:#0a0f10;border-radius:12px;padding:16px}
+.value{font-size:1.4rem;color:var(--cyan);margin-top:8px}
+.status{margin-top:20px;padding:15px;border:1px solid var(--cyan);border-radius:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>XE Tester Pro</h1>
+<p>Professional Controller Analyzer</p>
+</header>
+
+<div class="status" id="status">Esperando control...</div>
+
+<div class="grid">
+<div class="card"><b>Dispositivo</b><div class="value" id="name">---</div></div>
+<div class="card"><b>VID / PID</b><div class="value" id="vidpid">---</div></div>
+<div class="card"><b>Botones</b><div class="value" id="buttons">0</div></div>
+<div class="card"><b>Ejes</b><div class="value" id="axes">0</div></div>
+<div class="card"><b>Polling</b><div class="value" id="poll">0 Hz</div></div>
+<div class="card"><b>XE Score</b><div class="value" id="score">100%</div></div>
+</div>
+
+<script>
+let idx=null,last=performance.now(),frames=0;
+function scan(){
+ const pads=navigator.getGamepads?navigator.getGamepads():[];
+ if(idx===null){
+   for(const p of pads){
+     if(p){idx=p.index;document.getElementById('status').textContent='🎮 '+p.id;}
+   }
+ }
+ if(idx!==null){
+   const gp=navigator.getGamepads()[idx];
+   if(gp){
+      document.getElementById('name').textContent=gp.id;
+      document.getElementById('buttons').textContent=gp.buttons.length;
+      document.getElementById('axes').textContent=gp.axes.length;
+      const m=gp.id.match(/Vendor: ([0-9a-fA-F]{4}).*Product: ([0-9a-fA-F]{4})/);
+      if(m)document.getElementById('vidpid').textContent=m[1]+" / "+m[2];
+      frames++;
+      const now=performance.now();
+      if(now-last>=1000){document.getElementById('poll').textContent=frames+' Hz';frames=0;last=now;}
+   }
+ }
+ requestAnimationFrame(scan);
+}
+scan();
+</script>
+</body>
+</html>
