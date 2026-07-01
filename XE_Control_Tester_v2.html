@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XE Control Tester - Diagnóstico Avanzado</title>
+    <style>
+        :root {
+            --cyan-bright: #00f0ff;
+            --cyan-dark: #008b9b;
+            --bg-dark: #0a0f12;
+            --white: #ffffff;
+            --gray: #2a353c;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--white);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Estilos del Logotipo XE CONTROL TESTER */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            max-width: 1100px;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--cyan-bright);
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-hexagon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Hexágono CSS */
+        .logo-hexagon svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: var(--cyan-bright);
+            stroke-width: 2;
+        }
+
+        .logo-letters-xe {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--white);
+            z-index: 1;
+            font-family: 'Arial Black', Gadget, sans-serif; /* Fuente más gruesa para las letras principales */
+            text-shadow: 0 0 10px var(--cyan-bright);
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .main-brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .sub-brand-name {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--cyan-bright);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 0;
+            margin-top: 2px;
+        }
+
+        .connect-alert {
+            color: var(--cyan-bright);
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 40px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* Resto de la interfaz */
+        .tester-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 1100px;
+            padding-bottom: 30px;
+        }
+
+        /* Optimización para móviles */
+        @media (max-width: 600px) {
+            .brand-header {
+                justify-content: center;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            .logo-container {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .logo-text-wrapper {
+                align-items: center;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--cyan-dark);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+
+        .card h2 {
+            color: var(--cyan-bright);
+            margin-top: 0;
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 5px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Joysticks Visualizer */
+        .joystick-area {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .stick-viewer {
+            width: 110px;
+            height: 110px;
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            position: relative;
+            background: radial-gradient(circle, transparent 60%, rgba(0,240,255,0.05) 100%);
+        }
+
+        .deadzone-ring {
+            width: 22px; 
+            height: 22px;
+            border: 1px dashed var(--cyan-bright);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .stick-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--cyan-bright);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px var(--cyan-bright);
+            transition: transform 0.05s linear;
+        }
+
+        /* Buttons Grid */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-ui {
+            background: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+            padding: 8px 2px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .btn-ui.active {
+            background: var(--cyan-bright);
+            color: var(--bg-dark);
+            border-color: var(--cyan-bright);
+            box-shadow: 0 0 10px var(--cyan-bright);
+        }
+
+        /* Osciloscopio Canvas */
+        .osc-container {
+            width: 100%;
+            margin-top: 10px;
+        }
+        canvas {
+            width: 100%;
+            height: 100px;
+            background-color: #05080a;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            display: block;
+        }
+
+        /* Stats */
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .stat-val {
+            color: var(--cyan-bright);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="brand-header">
+        <div class="logo-container">
+            <div class="logo-hexagon">
+                <svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50 3, 97 25, 97 75, 50 97, 3 75, 3 25"/>
+                </svg>
+                <span class="logo-letters-xe">XE</span>
+            </div>
+            <div class="logo-text-wrapper">
+                <h1 class="main-brand-name">Control Tester</h1>
+                <span class="sub-brand-name">Diagnostic</span>
+            </div>
+        </div>
+    </header>
+
+    <p id="connection-status" class="connect-alert">🎮 Por favor, conecta un control y presiona cualquier botón para iniciar...</p>
+
+    <div class="tester-container" id="tester-ui" style="display: none;">
+        
+        <div class="card">
+            <h2>Rendimiento</h2>
+            <div class="stat-line"><span>ID:</span> <span id="gamepad-id" class="stat-val"
