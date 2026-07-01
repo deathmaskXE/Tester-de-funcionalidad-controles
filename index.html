@@ -17,7 +17,7 @@
             <div class="status-container">
                 <div id="connection-status" class="status-indicator disconnected">
                     <span class="status-dot"></span>
-                    <span id="status-text">Esperando control...</span>
+                    <span id="status-text">Iniciando sistema...</span>
                 </div>
             </div>
         </header>
@@ -29,30 +29,12 @@
                     <h2>Información del Dispositivo</h2>
                 </header>
                 <div class="panel-content info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Nombre</span>
-                        <span class="info-value" id="info-name">N/A</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">ID (VID/PID)</span>
-                        <span class="info-value" id="info-id">N/A</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Índice</span>
-                        <span class="info-value" id="info-index">N/A</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Mapeo</span>
-                        <span class="info-value" id="info-mapping">N/A</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Polling Rate</span>
-                        <span class="info-value" id="info-polling">0 Hz</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Timestamp</span>
-                        <span class="info-value" id="info-timestamp">0 ms</span>
-                    </div>
+                    <div class="info-item"><span class="info-label">Nombre</span><span class="info-value" id="info-name">N/A</span></div>
+                    <div class="info-item"><span class="info-label">ID (VID/PID)</span><span class="info-value" id="info-id">N/A</span></div>
+                    <div class="info-item"><span class="info-label">Índice</span><span class="info-value" id="info-index">N/A</span></div>
+                    <div class="info-item"><span class="info-label">Mapeo</span><span class="info-value" id="info-mapping">N/A</span></div>
+                    <div class="info-item"><span class="info-label">Polling Rate</span><span class="info-value" id="info-polling">0 Hz</span></div>
+                    <div class="info-item"><span class="info-label">Timestamp</span><span class="info-value" id="info-timestamp">0 ms</span></div>
                 </div>
             </section>
 
@@ -65,11 +47,9 @@
                         <span id="xe-score-value">--</span>
                     </div>
                     <p id="xe-score-text" class="score-classification">Esperando diagnóstico...</p>
-                    
                     <ul id="xe-recommendations" class="recommendations-list">
                         <li class="placeholder-text">Realiza pruebas en los módulos y presiona "Evaluar" para obtener recomendaciones.</li>
                     </ul>
-                    
                     <button id="btn-calculate-score" class="action-btn score-btn" disabled>Generar Evaluación XE</button>
                 </div>
             </section>
@@ -91,9 +71,7 @@
                         <div class="joystick-grid">
                             <div class="joystick-card">
                                 <h3>Joystick Izquierdo (LS)</h3>
-                                <div class="canvas-container">
-                                    <canvas id="ls-canvas" width="280" height="280"></canvas>
-                                </div>
+                                <div class="canvas-container"><canvas id="ls-canvas" width="280" height="280"></canvas></div>
                                 <div class="stats-grid">
                                     <div class="stat-box"><span class="stat-label">Eje X:</span><span id="ls-x" class="stat-val text-cyan">0.00000</span></div>
                                     <div class="stat-box"><span class="stat-label">Eje Y:</span><span id="ls-y" class="stat-val text-cyan">0.00000</span></div>
@@ -103,9 +81,7 @@
                             </div>
                             <div class="joystick-card">
                                 <h3>Joystick Derecho (RS)</h3>
-                                <div class="canvas-container">
-                                    <canvas id="rs-canvas" width="280" height="280"></canvas>
-                                </div>
+                                <div class="canvas-container"><canvas id="rs-canvas" width="280" height="280"></canvas></div>
                                 <div class="stats-grid">
                                     <div class="stat-box"><span class="stat-label">Eje X:</span><span id="rs-x" class="stat-val text-cyan">0.00000</span></div>
                                     <div class="stat-box"><span class="stat-label">Eje Y:</span><span id="rs-y" class="stat-val text-cyan">0.00000</span></div>
@@ -165,4 +141,116 @@
                         <div class="oscope-toolbar">
                             <div class="oscope-legend">
                                 <span class="legend-item"><span class="legend-color" style="background:var(--color-cyan-neon)"></span> Canal X</span>
-                                
+                                <span class="legend-item"><span class="legend-color" style="background:var(--color-warning)"></span> Canal Y</span>
+                            </div>
+                            <div class="oscope-actions">
+                                <span class="stat-label">ZOOM: <span id="oscope-zoom-val">1.0x</span></span>
+                                <button id="btn-oscope-zoom-out" class="action-btn secondary small">-</button>
+                                <button id="btn-oscope-zoom-in" class="action-btn secondary small">+</button>
+                                <button id="btn-oscope-freeze" class="action-btn">Congelar</button>
+                            </div>
+                        </div>
+                        <div class="oscope-grid">
+                            <div class="oscope-card">
+                                <div class="oscope-header">
+                                    <h3>Historial LX / LY (60 FPS)</h3>
+                                    <button id="btn-export-ls" class="action-btn secondary small">Exportar PNG</button>
+                                </div>
+                                <div class="oscope-canvas-container"><canvas id="ls-oscope-canvas" width="800" height="200"></canvas></div>
+                            </div>
+                            <div class="oscope-card">
+                                <div class="oscope-header">
+                                    <h3>Historial RX / RY (60 FPS)</h3>
+                                    <button id="btn-export-rs" class="action-btn secondary small">Exportar PNG</button>
+                                </div>
+                                <div class="oscope-canvas-container"><canvas id="rs-oscope-canvas" width="800" height="200"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="view-reportes" class="view-section">
+                        <div class="report-form-container no-print">
+                            <div class="report-form-group">
+                                <label for="client-name">Nombre del Cliente</label>
+                                <input type="text" id="client-name" placeholder="Ej. Juan Pérez" class="custom-input">
+                            </div>
+                            <div class="report-form-group">
+                                <label for="device-serial">Número de Serie</label>
+                                <input type="text" id="device-serial" placeholder="Ej. XBOX-892374" class="custom-input">
+                            </div>
+                            <div class="report-form-group">
+                                <label for="tech-comments">Comentarios Adicionales</label>
+                                <textarea id="tech-comments" rows="2" placeholder="Observaciones del técnico..." class="custom-input"></textarea>
+                            </div>
+                            <div class="report-actions">
+                                <button id="btn-generate-report" class="action-btn">Actualizar Plantilla</button>
+                                <button id="btn-print-pdf" class="action-btn secondary">Imprimir / PDF</button>
+                                <button id="btn-send-wa" class="action-btn" style="background:#25D366; color:#000; border-color:#25D366;">Enviar por WhatsApp</button>
+                            </div>
+                        </div>
+
+                        <div class="report-document" id="report-document">
+                            <div class="doc-header">
+                                <div>
+                                    <h1 style="color:#000; font-size: 2rem;">XE TESTER PRO</h1>
+                                    <p style="color:#666; font-size: 0.9rem;">Reporte Técnico de Diagnóstico</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <p><strong>Fecha:</strong> <span id="doc-date">--/--/----</span></p>
+                                    <p><strong>ID Documento:</strong> <span id="doc-id">XETP-0000</span></p>
+                                </div>
+                            </div>
+                            <div class="doc-section row-split">
+                                <div class="col">
+                                    <h3>Datos del Cliente</h3>
+                                    <p><strong>Nombre:</strong> <span id="doc-client">No especificado</span></p>
+                                    <p><strong>Número de Serie:</strong> <span id="doc-serial">No especificado</span></p>
+                                </div>
+                                <div class="col">
+                                    <h3>Información del Dispositivo</h3>
+                                    <p><strong>Dispositivo:</strong> <span id="doc-device-name">N/A</span></p>
+                                    <p><strong>Hardware ID:</strong> <span id="doc-device-id">N/A</span></p>
+                                </div>
+                            </div>
+                            <div class="doc-section score-section">
+                                <div class="doc-score-circle"><span id="doc-score-val">--</span></div>
+                                <div class="doc-score-details">
+                                    <h3>Calificación Global (XE Score)</h3>
+                                    <p id="doc-score-class" style="font-size: 1.2rem; font-weight: bold; color: #333;">Pendiente</p>
+                                </div>
+                            </div>
+                            <div class="doc-section">
+                                <h3>Resultados y Recomendaciones</h3>
+                                <ul id="doc-recommendations" class="doc-list">
+                                    <li>Genere una evaluación primero para ver los resultados.</li>
+                                </ul>
+                            </div>
+                            <div class="doc-section">
+                                <h3>Comentarios del Técnico</h3>
+                                <p id="doc-comments" style="font-style: italic; color:#555;">Sin comentarios adicionales.</p>
+                            </div>
+                            <div class="doc-footer">
+                                <div class="doc-qr-container">
+                                    <img id="doc-qr-img" src="" alt="Código QR del Reporte" style="display:none; width:100px; height:100px;">
+                                    <p style="font-size:0.7rem; color:#888; margin-top:5px;">Escanee para versión digital</p>
+                                </div>
+                                <div class="doc-signatures">
+                                    <div class="signature-line"><p>Firma del Técnico Responsable</p></div>
+                                    <div class="signature-line"><p>Firma de Conformidad del Cliente</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="diagnostics.js"></script>
+    <script src="buttons.js"></script>
+    <script src="gamepad.js"></script>
+    <script src="charts.js"></script>
+    <script src="report.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
