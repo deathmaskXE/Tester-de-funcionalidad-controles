@@ -1,37 +1,20 @@
-/**
- * ==========================================================================
- * XE TESTER PRO - CORE APPLICATION LOGIC
- * Architecture: Vanilla JS ES6+ (No Frameworks)
- * Modules Integrated: 1 to 6
- * Fix: Continuous Polling Engine para bypass de seguridad Anti-Fingerprinting
- * ==========================================================================
- */
-
-import { JoystickAnalyzer } from './diagnostics.js';
-import { ButtonAnalyzer } from './buttons.js';
-import { TriggerAnalyzer, XEScoreCalculator } from './gamepad.js';
-import { OscilloscopeAnalyzer } from './charts.js';
-import { ReportGenerator } from './report.js';
-
 class XETesterPro {
     constructor() {
-        this.activeGamepad = null;
         this.activeGamepadIndex = null;
         this.animationFrameId = null;
         this.lastTimestamp = 0;
         this.pollingRates = [];
         
-        // Instancia de Módulos
+        // Las clases ahora están disponibles globalmente gracias a la carga secuencial en index.html
         this.joystickAnalyzer = new JoystickAnalyzer();
         this.buttonAnalyzer = new ButtonAnalyzer();
         this.triggerAnalyzer = new TriggerAnalyzer();
         this.oscopeAnalyzer = new OscilloscopeAnalyzer();
-        
         this.xeScore = new XEScoreCalculator(this); 
         this.reportGenerator = new ReportGenerator(this);
         
         this.initUI();
-        this.initGamepadSystem();
+        this.startEngine();
     }
 
     initUI() {
@@ -42,12 +25,9 @@ class XETesterPro {
             btn.addEventListener('click', (e) => {
                 tabBtns.forEach(b => b.classList.remove('active'));
                 viewSections.forEach(v => v.classList.remove('active'));
-
                 const targetId = e.target.getAttribute('data-target');
                 e.target.classList.add('active');
                 document.getElementById(`view-${targetId}`).classList.add('active');
-                
-                // Redimensionar canvas de Osciloscopio si se entra a esa pestaña
                 if (targetId === 'osciloscopio') {
                     this.oscopeAnalyzer.lsChart.resize();
                     this.oscopeAnalyzer.rsChart.resize();
@@ -55,72 +35,53 @@ class XETesterPro {
             });
         });
 
-        console.log("[XE Tester Pro] Sistema UI Inicializado.");
+        // Informar al usuario que el sistema arrancó con éxito
+        document.getElementById('status-text').textContent = "Presiona cualquier botón en el control...";
     }
 
     /**
-     * Inicializa el sistema de detección robusto (Eventos + Polling)
+     * MOTOR BLINDADO DE SONDEO (Polling Engine)
+     * Ignoramos los eventos engañosos del navegador y leemos el hardware 60 veces por segundo.
      */
-    initGamepadSystem() {
-        // 1. Escuchar eventos nativos (pueden fallar si ya estaba conectado antes de cargar)
-        window.addEventListener("gamepadconnected", (e) => {
-            console.log(`[XE Tester Pro] Evento de conexión detectado: ${e.gamepad.id}`);
-            if (this.activeGamepadIndex === null) {
-                this.handleGamepadConnect(e.gamepad);
-            }
-        });
+    startEngine() {
+        const loop = (time) => {
+            this.pollHardware(time);
+            this.animationFrameId = requestAnimationFrame(loop);
+        };
+        this.animationFrameId = requestAnimationFrame(loop);
+    }
 
-        window.addEventListener("gamepaddisconnected", (e) => {
-            console.log(`[XE Tester Pro] Evento de desconexión detectado: ${e.gamepad.id}`);
-            if (this.activeGamepadIndex === e.gamepad.index) {
+    pollHardware(currentTime) {
+        // Soporte universal para Chrome, Edge, Safari, Firefox
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        let activeStillConnected = false;
+
+        // Fase 1: Si ya tenemos un control asignado, verificar que siga vivo
+        if (this.activeGamepadIndex !== null) {
+            const current = gamepads[this.activeGamepadIndex];
+            if (current && current.connected) {
+                activeStillConnected = true;
+                this.updateGamepadData(currentTime, current);
+            } else {
+                // Se desconectó físicamente o se perdió la conexión Bluetooth
                 this.handleGamepadDisconnect();
             }
-        });
+        }
 
-        // 2. Iniciar el Engine de sondeo continuo (60FPS) INMEDIATAMENTE
-        // Esto soluciona el bloqueo de Chrome/Edge al devolver arrays nulos.
-        const engineLoop = (time) => {
-            this.pollGamepads(time);
-            this.animationFrameId = requestAnimationFrame(engineLoop);
-        };
-        this.animationFrameId = requestAnimationFrame(engineLoop);
-        
-        console.log("[XE Tester Pro] Motor de detección continuo iniciado. Presiona cualquier botón para enlazar.");
-    }
-
-    /**
-     * Bucle de sondeo constante para detectar controles "fantasma" bloqueados por el navegador
-     */
-    pollGamepads(currentTime) {
-        // Obtener el estado actual del hardware
-        const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-        
-        // ESTADO A: No tenemos control asignado, buscar uno válido
-        if (this.activeGamepadIndex === null) {
+        // Fase 2: Si no hay control asignado, buscar desesperadamente uno conectado
+        if (!activeStillConnected) {
             for (let i = 0; i < gamepads.length; i++) {
+                // Cuando el usuario oprima cualquier botón, la seguridad del navegador liberará este objeto
                 if (gamepads[i] && gamepads[i].connected) {
                     this.handleGamepadConnect(gamepads[i]);
-                    break; // Enlazar al primer control que reporte actividad
+                    break; 
                 }
-            }
-        } 
-        // ESTADO B: Tenemos un control asignado, procesar sus datos
-        else {
-            const gamepad = gamepads[this.activeGamepadIndex];
-            
-            // Si el control se desconectó físicamente o el índice se vuelve null
-            if (!gamepad || !gamepad.connected) {
-                this.handleGamepadDisconnect();
-            } else {
-                // El control está activo, actualizar módulos
-                this.updateGamepadData(currentTime, gamepad);
             }
         }
     }
 
     handleGamepadConnect(gamepad) {
         this.activeGamepadIndex = gamepad.index;
-        this.activeGamepad = gamepad;
         
         const statusIndicator = document.getElementById('connection-status');
         const statusText = document.getElementById('status-text');
@@ -139,7 +100,6 @@ class XETesterPro {
 
     handleGamepadDisconnect() {
         this.activeGamepadIndex = null;
-        this.activeGamepad = null;
         this.lastTimestamp = 0;
         this.pollingRates = [];
         
@@ -148,9 +108,7 @@ class XETesterPro {
         
         statusIndicator.classList.remove('connected');
         statusIndicator.classList.add('disconnected');
-        
-        // Aviso importante al usuario respecto a la seguridad de los navegadores
-        statusText.textContent = "Presiona cualquier botón...";
+        statusText.textContent = "Esperando... Presiona un botón";
 
         document.getElementById('info-name').textContent = "N/A";
         document.getElementById('info-id').textContent = "N/A";
@@ -159,7 +117,6 @@ class XETesterPro {
         document.getElementById('info-polling').textContent = "0 Hz";
         document.getElementById('info-timestamp').textContent = "0 ms";
 
-        // Reiniciar todos los módulos visuales
         this.joystickAnalyzer.resetPaths();
         this.joystickAnalyzer.resetStatsUI();
         this.joystickAnalyzer.drawJoystick(this.joystickAnalyzer.lsCtx, {x:0, y:0}, []);
@@ -179,11 +136,7 @@ class XETesterPro {
         return 'Control Genérico';
     }
 
-    /**
-     * Actualiza la data de todos los submódulos usando el control activo
-     */
     updateGamepadData(currentTime, gamepad) {
-        // Cálculo de Polling Rate 
         const dt = currentTime - this.lastTimestamp;
         if (dt > 0 && this.lastTimestamp !== 0) {
             const currentHz = 1000 / dt;
@@ -192,7 +145,6 @@ class XETesterPro {
             
             const avgHz = this.pollingRates.reduce((a, b) => a + b) / this.pollingRates.length;
             
-            // Actualizar DOM a baja frecuencia para no afectar rendimiento
             if (Math.floor(currentTime) % 10 < 2) {
                 document.getElementById('info-polling').textContent = `${Math.round(avgHz)} Hz`;
                 document.getElementById('info-timestamp').textContent = `${Math.round(gamepad.timestamp)} ms`;
@@ -200,7 +152,7 @@ class XETesterPro {
         }
         this.lastTimestamp = currentTime;
 
-        // Inyectar datos en vivo a los módulos analíticos
+        // Despachar los datos a los módulos (Estricto orden de lectura)
         this.joystickAnalyzer.update(gamepad.axes);
         this.buttonAnalyzer.update(gamepad.buttons, currentTime);
         this.triggerAnalyzer.update(gamepad.buttons);
@@ -208,7 +160,7 @@ class XETesterPro {
     }
 }
 
-// Inicializar Aplicación al cargar el DOM
+// Arrancar la aplicación una vez que todo el HTML se ha dibujado
 document.addEventListener('DOMContentLoaded', () => {
     window.xeApp = new XETesterPro();
 });
