@@ -3,415 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XE Control Tester PRO</title>
+    <title>XE CONTROL TESTER PRO</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --cyan-bright: #00f0ff;
-            --cyan-dark: #008b9b;
-            --bg-dark: #0a0f12;
-            --white: #ffffff;
-            --gray: #2a353c;
-            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --color-a: #00ff00;
-            --color-b: #ff0000;
-            --color-x: #0088ff;
-            --color-y: #ffff00;
-            --color-ok: #00ff00;
-            --color-warn: #ffff00;
-            --color-err: #ff0000;
+            --bg-color: #0a0a0a;
+            --panel-bg: #1a1a1a;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --cyan: #00ffff;
+            --cyan-glow: rgba(0, 255, 255, 0.3);
+            --btn-a: #00ff00;
+            --btn-b: #ff0000;
+            --btn-x: #0000ff;
+            --btn-y: #ffff00;
+            --danger: #ff3333;
+            --warning: #ffcc00;
+            --success: #33cc33;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--white);
-            font-family: var(--font-main);
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--panel-bg); border-bottom: 2px solid var(--cyan); box-shadow: 0 0 15px var(--cyan-glow); }
+        .logo { font-size: 24px; font-weight: 900; color: var(--cyan); letter-spacing: 2px; text-transform: uppercase; }
+        .controls button { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); padding: 8px 15px; margin-left: 10px; cursor: pointer; border-radius: 4px; transition: all 0.3s ease; font-weight: bold; }
+        .controls button:hover { background: var(--cyan); color: var(--bg-color); box-shadow: 0 0 10px var(--cyan-glow); }
+        .controls button.close-btn { border-color: var(--danger); color: var(--danger); }
+        .controls button.close-btn:hover { background: var(--danger); color: white; box-shadow: 0 0 10px rgba(255,51,51,0.5); }
 
-        /* Estilos del Logotipo XE CONTROL TESTER */
-        .brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            width: 100%;
-            max-width: 1100px;
-            padding: 15px 0;
-            border-bottom: 2px solid var(--cyan-bright);
-            margin-bottom: 20px;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-hexagon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .logo-hexagon svg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke: var(--cyan-bright);
-            stroke-width: 2;
-        }
-
-        .logo-letters-xe {
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--white);
-            z-index: 1;
-            font-family: 'Arial Black', Gadget, sans-serif;
-            text-shadow: 0 0 10px var(--cyan-bright);
-        }
-
-        .logo-text-wrapper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .main-brand-name {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--white);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            line-height: 1;
-            margin: 0;
-        }
-
-        .sub-brand-name {
-            font-size: 12px;
-            font-weight: 400;
-            color: var(--cyan-bright);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin: 0;
-            margin-top: 2px;
-        }
-
-        .pro-badge {
-            background: var(--cyan-bright);
-            color: var(--bg-dark);
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 10px;
-            font-size: 14px;
-            animation: pulse-badge 2s infinite;
-        }
-
-        @keyframes pulse-badge {
-            0% { box-shadow: 0 0 5px var(--cyan-bright); }
-            50% { box-shadow: 0 0 15px var(--cyan-bright); }
-            100% { box-shadow: 0 0 5px var(--cyan-bright); }
-        }
-
-        .connect-alert {
-            color: var(--cyan-bright);
-            font-size: 1.1rem;
-            text-align: center;
-            margin-top: 40px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
-
-        .tester-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            width: 100%;
-            max-width: 1100px;
-            padding-bottom: 30px;
-        }
-
-        @media (min-width: 800px) {
-            .tester-container {
-                grid-template-columns: 1fr 1fr;
-            }
-            .full-width {
-                grid-column: span 2;
-            }
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--cyan-dark);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .card h2 {
-            color: var(--cyan-bright);
-            margin-top: 0;
-            border-bottom: 1px solid var(--gray);
-            padding-bottom: 5px;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-line {
-            display: flex;
-            justify-content: space-between;
-            margin: 6px 0;
-            font-family: monospace;
-            font-size: 0.9rem;
-            border-bottom: 1px dashed rgba(255,255,255,0.1);
-            padding-bottom: 4px;
-        }
-        .stat-val {
-            color: var(--cyan-bright);
-            font-weight: bold;
-            text-align: right;
-            word-break: break-all;
-            max-width: 60%;
-        }
-
-        /* Progreso / Barras */
-        .progress-container {
-            width: 100%;
-            background-color: var(--gray);
-            border-radius: 4px;
-            margin-top: 5px;
-            height: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--cyan-bright);
-            transition: width 0.1s, background-color 0.3s;
-        }
-
-        /* SVG Controller Area */
-        .controller-visualizer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 70%);
-            border: 1px solid var(--gray);
-            border-radius: 8px;
-            position: relative;
-        }
-
-        .controller-svg {
-            max-width: 100%;
-            height: auto;
-            width: 500px;
-            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.2));
-        }
-
-        .svg-btn { fill: #333; stroke: #555; stroke-width: 2; transition: fill 0.1s; }
-        .svg-body { fill: #1a1f24; stroke: var(--cyan-dark); stroke-width: 3; }
+        /* Main Layout */
+        main { display: flex; flex: 1; padding: 20px; gap: 20px; overflow-y: auto; }
+        
+        .panel { background: var(--panel-bg); border: 1px solid #333; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .side-panel { width: 300px; flex-shrink: 0; overflow-y: auto; }
+        .center-panel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        
+        h2 { font-size: 16px; color: var(--cyan); border-bottom: 1px solid #333; padding-bottom: 5px; text-transform: uppercase; }
+        
+        /* Info Grid */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; }
+        .info-label { color: var(--text-muted); }
+        .info-value { font-weight: bold; word-break: break-all; }
+        
+        /* SVG Controller */
+        svg.gamepad-svg { width: 100%; max-width: 600px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); }
+        .svg-bg { fill: #222; stroke: #444; stroke-width: 2; }
+        .svg-btn { fill: #111; stroke: #555; stroke-width: 2; transition: fill 0.1s, filter 0.1s; }
         .svg-stick-base { fill: #111; stroke: #333; stroke-width: 2; }
-        .svg-stick { fill: #2a353c; stroke: var(--cyan-bright); stroke-width: 2; transition: transform 0.05s linear; }
-        .svg-trigger-bg { fill: #111; stroke: #333; }
-        .svg-trigger-fill { fill: var(--cyan-bright); transition: height 0.05s linear, y 0.05s linear; }
+        .svg-stick { fill: #333; stroke: #555; stroke-width: 2; }
+        
+        /* Active States */
+        .active-a { fill: var(--btn-a) !important; filter: drop-shadow(0 0 8px var(--btn-a)); }
+        .active-b { fill: var(--btn-b) !important; filter: drop-shadow(0 0 8px var(--btn-b)); }
+        .active-x { fill: var(--btn-x) !important; filter: drop-shadow(0 0 8px var(--btn-x)); }
+        .active-y { fill: var(--btn-y) !important; filter: drop-shadow(0 0 8px var(--btn-y)); }
+        .active-generic { fill: var(--cyan) !important; filter: drop-shadow(0 0 8px var(--cyan)); }
+        
+        /* Triggers & Sticks Bars */
+        .bar-container { width: 100%; background: #000; height: 15px; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #333; }
+        .bar-fill { height: 100%; background: var(--cyan); width: 0%; transition: width 0.05s linear; }
+        .trigger-text { position: absolute; width: 100%; text-align: center; font-size: 11px; top: -1px; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        
+        /* Crosshair/Graphs */
+        .stick-graph { width: 150px; height: 150px; background: #000; border-radius: 50%; border: 1px solid #444; position: relative; margin: 0 auto; }
+        .stick-axis { position: absolute; background: #333; }
+        .stick-axis.x { width: 100%; height: 1px; top: 50%; }
+        .stick-axis.y { width: 1px; height: 100%; left: 50%; }
+        .stick-dot { width: 10px; height: 10px; background: var(--cyan); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 5px var(--cyan); transition: top 0.05s, left 0.05s; }
+        .deadzone-ring { width: 20%; height: 20%; border: 1px dashed var(--danger); border-radius: 50%; position: absolute; top: 40%; left: 40%; opacity: 0.5; }
 
-        .btn-finish-test {
-            background: var(--cyan-bright);
-            color: var(--bg-dark);
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            width: 100%;
-            margin-top: 20px;
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-        }
-
-        .btn-finish-test:hover {
-            background: var(--white);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: var(--bg-dark);
-            border: 2px solid var(--cyan-bright);
-            border-radius: 10px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
-        }
-
-        .modal-title {
-            color: var(--cyan-bright);
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        .modal-score {
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 10px 0;
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        .modal-status {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .modal-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .m-btn {
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-pdf { background: #e74c3c; color: white; }
+        /* Health Display */
+        .health-display { text-align: center; padding: 20px 0; }
+        .health-score { font-size: 48px; font-weight: bold; }
+        .health-status { font-size: 18px; font-weight: bold; margin-top: 5px; }
+        
+        /* Footer / Actions */
+        footer { background: var(--panel-bg); padding: 15px 20px; display: flex; justify-content: center; gap: 20px; border-top: 1px solid #333; }
+        .btn-action { padding: 10px 20px; font-size: 16px; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.2s; }
+        .btn-action:hover { transform: scale(1.05); }
+        .btn-pdf { background: var(--text-main); color: var(--bg-color); }
         .btn-wa { background: #25D366; color: white; }
-        .btn-close { background: transparent; border: 1px solid var(--gray); color: var(--white); }
 
-        .m-btn:hover { filter: brightness(1.2); }
+        /* Status Banner */
+        #status-banner { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); padding: 10px 30px; border-radius: 20px; font-weight: bold; font-size: 14px; z-index: 100; opacity: 0; transition: opacity 0.3s; }
+        .status-connected { background: var(--success); color: #000; opacity: 1 !important; }
+        .status-disconnected { background: var(--danger); color: #fff; opacity: 1 !important; }
 
-        /* Reporte Oculto para PDF */
-        #pdf-report {
-            display: none;
-            background: white;
-            color: black;
-            padding: 40px;
-            width: 800px;
-            font-family: 'Segoe UI', Arial, sans-serif;
-        }
+        /* Hide elements on PDF generation */
+        .pdf-mode header, .pdf-mode footer, .pdf-mode #status-banner { display: none !important; }
+        .pdf-mode { height: auto !important; overflow: visible !important; }
 
-        .pdf-header {
-            display: flex;
-            align-items: center;
-            border-bottom: 3px solid #008b9b;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+        /* QR Container */
+        #qr-container { display: none; margin-top: 20px; text-align: center; }
+        #qrcode { display: inline-block; padding: 10px; background: white; border-radius: 5px; }
+
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            .side-panel { width: 100%; }
         }
-        .pdf-header h1 { margin: 0; color: #0a0f12; font-size: 28px; }
-        .pdf-header p { margin: 5px 0 0 0; color: #555; }
-        
-        .pdf-section { margin-bottom: 25px; }
-        .pdf-section h3 { background: #008b9b; color: white; padding: 8px 15px; margin: 0 0 15px 0; border-radius: 4px; }
-        
-        .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .pdf-item { border-bottom: 1px solid #eee; padding: 5px 0; display: flex; justify-content: space-between; }
-        .pdf-item strong { color: #333; }
-        
-        .pdf-result-box {
-            text-align: center; padding: 20px; border-radius: 8px; margin-top: 20px;
-            border: 2px solid #ccc;
-        }
-        .pdf-qr { text-align: center; margin-top: 40px; font-size: 12px; color: #777;}
     </style>
 </head>
 <body>
 
-    <header class="brand-header">
-        <div class="logo-container">
-            <div class="logo-hexagon">
-                <svg viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="50 3, 97 25, 97 75, 50 97, 3 75, 3 25"/>
-                </svg>
-                <span class="logo-letters-xe">XE</span>
-            </div>
-            <div class="logo-text-wrapper">
-                <h1 class="main-brand-name">Control Tester <span class="pro-badge">PRO</span></h1>
-                <span class="sub-brand-name">Diagnóstico Avanzado</span>
-            </div>
+    <header>
+        <div class="logo">XE CONTROL TESTER PRO</div>
+        <div class="controls">
+            <button id="btn-sound" onclick="toggleSound()">🔈 Sonido: OFF</button>
+            <button id="btn-mode" onclick="toggleMode()">Modo: TÉCNICO</button>
+            <button onclick="toggleFullScreen()">⛶ Pantalla Completa</button>
+            <button class="close-btn" onclick="closeApp()">❌ Cerrar</button>
         </div>
     </header>
 
-    <p id="connection-status" class="connect-alert">🎮 Presiona cualquier botón para conectar el control...</p>
+    <div id="status-banner">Esperando control...</div>
 
-    <div class="tester-container" id="tester-ui" style="display: none;">
-        
-        <div class="card">
+    <main id="report-content">
+        <div class="panel side-panel">
             <h2>Información del Dispositivo</h2>
-            <div class="stat-line"><span>Nombre:</span> <span id="gp-name" class="stat-val">---</span></div>
-            <div class="stat-line"><span>Modelo ID:</span> <span id="gp-id" class="stat-val">---</span></div>
-            <div class="stat-line"><span>Índice:</span> <span id="gp-index" class="stat-val">---</span></div>
-            <div class="stat-line"><span>Conexión:</span> <span id="gp-mapping" class="stat-val">---</span></div>
-            <div class="stat-line"><span>Botones:</span> <span id="gp-buttons" class="stat-val">0</span></div>
-            <div class="stat-line"><span>Ejes (Axes):</span> <span id="gp-axes" class="stat-val">0</span></div>
-            <div class="stat-line"><span>Estado:</span> <span id="gp-status" class="stat-val" style="color: var(--color-ok)">Conectado</span></div>
+            <div class="info-grid">
+                <div class="info-label">Nombre:</div> <div class="info-value" id="info-name">---</div>
+                <div class="info-label">VID / PID:</div> <div class="info-value" id="info-vidpid">--- / ---</div>
+                <div class="info-label">Conexión:</div> <div class="info-value" id="info-conn">---</div>
+                <div class="info-label">Ejes / Botones:</div> <div class="info-value" id="info-axes-btns">0 / 0</div>
+                <div class="info-label">Polling Rate:</div> <div class="info-value" id="info-hz">0 Hz</div>
+                <div class="info-label">Latencia:</div> <div class="info-value" id="info-lat">0 ms</div>
+            </div>
+
+            <h2>Gatillos (Triggers)</h2>
+            <div class="info-label">LT (Izquierdo)</div>
+            <div class="bar-container">
+                <div class="bar-fill" id="bar-lt"></div>
+                <div class="trigger-text" id="text-lt">0%</div>
+            </div>
+            <div class="info-label">RT (Derecho)</div>
+            <div class="bar-container">
+                <div class="bar-fill" id="bar-rt"></div>
+                <div class="trigger-text" id="text-rt">0%</div>
+            </div>
+
+            <h2>Estado de Botones</h2>
+            <div id="btn-status-list" style="font-size: 12px; font-family: monospace; display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                </div>
         </div>
 
-        <div class="card">
-            <h2>Diagnóstico Automático</h2>
-            
-            <div class="stat-line"><span>Drift Izquierdo:</span> <span id="diag-drift-l" class="stat-val">0.0%</span></div>
-            <div class="progress-container"><div id="prog-drift-l" class="progress-bar" style="width: 0%;"></div></div>
-            
-            <div class="stat-line" style="margin-top: 15px;"><span>Drift Derecho:</span> <span id="diag-drift-r" class="stat-val">0.0%</span></div>
-            <div class="progress-container"><div id="prog-drift-r" class="progress-bar" style="width: 0%;"></div></div>
+        <div class="panel center-panel">
+            <svg class="gamepad-svg" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+                <path class="svg-bg" d="M 100 50 C 30 50 10 150 50 250 C 70 290 130 250 160 200 C 180 220 320 220 340 200 C 370 250 430 290 450 250 C 490 150 470 50 400 50 Z" />
+                
+                <rect class="svg-btn" id="svg-lt" x="100" y="20" width="60" height="20" rx="5"/>
+                <rect class="svg-btn" id="svg-lb" x="100" y="45" width="60" height="15" rx="5"/>
+                <rect class="svg-btn" id="svg-rt" x="340" y="20" width="60" height="20" rx="5"/>
+                <rect class="svg-btn" id="svg-rb" x="340" y="45" width="60" height="15" rx="5"/>
 
-            <div class="stat-line" style="margin-top: 15px;"><span>Circularidad Max (L / R):</span> <span id="diag-circ" class="stat-val">0% / 0%</span></div>
-            
-            <div class="stat-line" style="margin-top: 15px;"><span>Zona Muerta Recomendada:</span> <span id="diag-dz" class="stat-val">Calculando...</span></div>
+                <g id="svg-dpad" transform="translate(140, 150)">
+                    <rect class="svg-btn" id="svg-up" x="-10" y="-30" width="20" height="25" rx="2"/>
+                    <rect class="svg-btn" id="svg-down" x="-10" y="5" width="20" height="25" rx="2"/>
+                    <rect class="svg-btn" id="svg-left" x="-30" y="-10" width="25" height="20" rx="2"/>
+                    <rect class="svg-btn" id="svg-right" x="5" y="-10" width="25" height="20" rx="2"/>
+                    <rect class="svg-btn" x="-10" y="-10" width="20" height="20"/>
+                </g>
 
-            <div class="stat-line" style="margin-top: 15px; font-size: 1.1rem;"><span>Salud General:</span> <span id="diag-health" class="stat-val">100%</span></div>
-            <div class="progress-container" style="height: 15px;"><div id="prog-health" class="progress-bar" style="width: 100%; background-color: var(--color-ok);"></div></div>
+                <g transform="translate(360, 100)">
+                    <circle class="svg-btn" id="svg-y" cx="0" cy="-25" r="12"/>
+                    <circle class="svg-btn" id="svg-a" cx="0" cy="25" r="12"/>
+                    <circle class="svg-btn" id="svg-x" cx="-25" cy="0" r="12"/>
+                    <circle class="svg-btn" id="svg-b" cx="25" cy="0" r="12"/>
+                </g>
+
+                <rect class="svg-btn" id="svg-back" x="210" y="100" width="20" height="10" rx="3"/>
+                <rect class="svg-btn" id="svg-start" x="270" y="100" width="20" height="10" rx="3"/>
+                <circle class="svg-btn" id="svg-home" cx="250" cy="70" r="12"/>
+
+                <g transform="translate(140, 90)">
+                    <circle class="svg-stick-base" cx="0" cy="0" r="30"/>
+                    <circle class="svg-stick" id="svg-ls" cx="0" cy="0" r="20"/>
+                </g>
+                <g transform="translate(360, 170)">
+                    <circle class="svg-stick-base" cx="0" cy="0" r="30"/>
+                    <circle class="svg-stick" id="svg-rs" cx="0" cy="0" r="20"/>
+                </g>
+            </svg>
+
+            <div class="health-display">
+                <h2>Salud del Control</h2>
+                <div class="health-score" id="health-score">---%</div>
+                <div class="health-status" id="health-status">ESPERANDO ANÁLISIS</div>
+                <div style="margin-top: 10px; font-size: 14px; color: var(--text-muted);" id="health-recs">Conecte un control y mueva los joysticks para evaluar.</div>
+            </div>
+
+            <div id="qr-container">
+                <h2>Certificado XE</h2>
+                <div id="qrcode"></div>
+            </div>
         </div>
 
-        <div class="card full-width">
-            <h2>Control Interactivo</h2>
-            <div class="controller-visualizer">
-                <svg class="controller-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                    <path class="svg-body" d="M 150 100 C 50 100, 20 200, 50 350 C 70 450, 150 450, 220 350
+        <div class="panel side-panel">
+            <h2>Joystick Izquierdo</h2>
+            <div class="stick-graph">
+                <div class="stick-axis x"></div>
+                <div class="stick-axis y"></div>
+                <div class="deadzone-ring"></div>
+                <div class="stick-dot" id="dot-ls"></div>
+            </div>
+            <div class="info-grid" style="margin-top: 10px;">
+                <div class="info-label">X / Y:</div> <div class="info-value" id="val-ls-xy">0.00 / 0.00</div>
+                <div class="info-label">Drift:</div> <div class="info-value" id="val-ls-drift">0.00%</div>
+                <div class="info-label">Circularidad:</div> <div class="info-value" id="val-ls-circ">Calculando...</div>
+                <div class="info-label">Zona Muerta:</div> <div class="info-value">0.10</div>
+            </div>
+
+            <h2 style="margin-top: 20px;">Joystick Derecho</h2>
+            <div class="stick-graph">
+                <div class="stick-axis x"></div>
+                <div class="stick-axis y"></div>
+                <div class="deadzone-ring"></div>
+                <div class="stick-dot" id="dot-rs"></div>
+            </div>
+            <div class="info-grid" style="margin-top: 10px;">
+                <div class="info-label">X / Y:</div> <div class="info-value" id="val-rs-xy">0.00 / 0.00</div>
+                <div class="info-label">Drift:</div> <div class="info-value" id="val-rs-drift">0.00%</div>
+                <div class="info-label">Circularidad:</div> <div class="info-value" id="val-rs-circ">Calculando...</div>
+                <div class="info-label">Zona Muerta:</div> <div class="info-value">0.10</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <button class="btn-action btn-pdf" onclick="generatePDF()">📄 Generar PDF</button>
+        <button class="btn-action btn-wa" onclick="sendWhatsApp()">📤 Enviar al Taller XE</button>
+    </footer>
+
+    <script>
+        // --- VARIABLES GLOBALES Y ESTADO ---
+        let gamepadIndex = null;
+        let animationFrameId = null;
+        let soundEnabled = false;
+        let isTechMode = true;
+        let audioCtx = null;
+        
+        // Métricas de análisis
+        let lastTime = performance.now();
+        let frameCount = 0;
+        let pollingRate = 0;
+        let maxRadiusLS = 0;
+        let maxRadiusRS = 0;
+        let driftLS = 0;
+        let driftRS = 0;
+        let currentHealth = 100;
+        let healthLabel = "";
+
+        // Nombres estándar de botones (Standard Gamepad Mapping)
+        const btnNames = [
+            "A", "B", "X", "Y", "LB", "RB", "LT", "RT", 
+            "BACK", "START", "L3", "R3", "UP", "DOWN", "LEFT", "RIGHT", "HOME"
+        ];
+        
+        // Mapeo de IDs SVG
+        const svgMap = {
+            0: 'svg-a', 1: 'svg-b', 2: 'svg-x', 3: 'svg-y',
+            4: 'svg-lb', 5: 'svg-rb', 6: 'svg-lt', 7: 'svg-rt',
+            8: 'svg-back', 9: 'svg-start', 10: 'svg-ls', 11: 'svg-rs',
+            12: 'svg-up', 13: 'svg-down', 14: 'svg-left', 15: 'svg-right', 16: 'svg-home'
+        };
+
+        // Estado anterior de botones para sonido
+        let prevBtnState = new Array(17).fill(false);
+
+        // Generar lista de botones en UI
+        const btnListContainer = document.getElementById('btn-status-list');
+        btnNames.forEach((name, i) => {
+            btnListContainer.innerHTML += `<div><span style="color:var(--text-muted)">${name}:</span> <span id="btn-txt-${i}" style="color:white">Liberado</span></div>`;
+        });
+
+        // Generar QR Base
+        const qrCode = new QRCode(document.getElementById("qrcode"), {
+            text: "XE CONTROL TESTER PRO - Análisis Completo",
+            width: 128,
+            height: 128,
+            colorDark : "#00ffff",
+            colorLight : "#1a1a1a",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        // --- SISTEMA DE SONIDO ---
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playBeep(freq = 600, type = 'sine', duration = 0.05) {
+            if (!soundEnabled || !audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        // --- MANEJO DE EVENTOS UI ---
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            if(soundEnabled) initAudio();
+            document.getElementById('btn-sound').innerText = soundEnabled ? '🔊 Sonido: ON' : '🔈 Sonido: OFF';
+        }
+
+        function toggleMode() {
+            isTechMode = !isTechMode;
+            document.getElementById('btn-mode').innerText = `Modo: ${isTechMode ? 'TÉCNICO' : 'CLIENTE'}`;
+            // En modo cliente simplificamos la vista ocultando valores crudos
+            const detailElements = document.querySelectorAll('.info-grid, .stick-graph');
+            detailElements.forEach(el => el.style.opacity = isTechMode ? '1' : '0.3');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function closeApp() {
+            if(confirm("¿Deseas cerrar el tester? No se guardará ninguna información.")) {
+                window.close(); // Funciona si se abrió por script, sino:
+                document.body.innerHTML = "<h1 style='text-align:center; margin-top:20vh; color:var(--cyan)'>SESIÓN FINALIZADA</h1><p style='text-align:center'>Puede cerrar esta pestaña.</p>";
+            }
+        }
+
+        function showStatus(text, type) {
+            const banner = document.getElementById('status-banner');
+            banner.innerText = text;
+            banner.className = `status-${type}`;
+            setTimeout(() => banner.className = '', 3000);
+        }
+
+        // --- EVENTOS GAMEPAD API ---
+        window.addEventListener("gamepadconnected", (e) => {
+            gamepadIndex = e.gamepad.index;
+            showStatus(`Control Conectado: ${e.gamepad.id.substring(0,25)}...`, 'connected');
+            if(soundEnabled) playBeep(800, 'square', 0.1);
+            extractDeviceInfo(e.gamepad);
+            loop();
+        });
+
+        window.addEventListener("gamepaddisconnected", (e) => {
+            if (e.gamepad.index === gamepadIndex) {
+                gamepadIndex = null;
+                cancelAnimationFrame(animationFrameId);
+                showStatus("Control Desconectado", 'disconnected');
+                document.getElementById('info-name').innerText = "---";
+                resetUI();
+            }
+        });
+
+        // --- LÓGICA DE DETECCIÓN Y ANÁLISIS ---
+        function extractDeviceInfo(gp) {
+            document.getElementById('info-name').innerText = gp.id;
+            document.getElementById('info-axes-btns').innerText = `${gp.axes.length} / ${gp.buttons.length}`;
+            
+            // Intento de extracción de VID/PID estándar en Chromium/Firefox
+            const vidMatch = gp.id.match(/(Vendor: |v)([0-9a-fA-F]{4})/i) || gp.id.match(/^([0-9a-fA-F]{4})-/);
+            const pidMatch = gp.id.match(/(Product: |p)([0-9a-fA-F]{4})/i) || gp.id.match(/-([0-9a-fA-F]{4})-/);
+            
+            const vid = vidMatch ? vidMatch[vidMatch.length-1].toUpperCase() : "DESC";
+            const pid = pidMatch ? pidMatch[pidMatch.length-1]
