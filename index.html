@@ -14,10 +14,6 @@
             --text-muted: #888888;
             --cyan: #00ffff;
             --cyan-glow: rgba(0, 255, 255, 0.3);
-            --btn-a: #00ff00;
-            --btn-b: #ff0000;
-            --btn-x: #0000ff;
-            --btn-y: #ffff00;
             --danger: #ff3333;
             --warning: #ffcc00;
             --success: #33cc33;
@@ -36,11 +32,9 @@
         .controls button.close-btn:hover { background: var(--danger); color: white; box-shadow: 0 0 10px rgba(255,51,51,0.5); }
 
         /* Main Layout */
-        main { display: flex; flex: 1; padding: 20px; gap: 20px; overflow-y: auto; }
+        main { display: flex; flex: 1; padding: 20px; gap: 20px; overflow-y: auto; justify-content: center; }
         
-        .panel { background: var(--panel-bg); border: 1px solid #333; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .side-panel { width: 300px; flex-shrink: 0; overflow-y: auto; }
-        .center-panel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .panel { background: var(--panel-bg); border: 1px solid #333; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; flex: 1; max-width: 450px; overflow-y: auto; }
         
         h2 { font-size: 16px; color: var(--cyan); border-bottom: 1px solid #333; padding-bottom: 5px; text-transform: uppercase; }
         
@@ -49,35 +43,21 @@
         .info-label { color: var(--text-muted); }
         .info-value { font-weight: bold; word-break: break-all; }
         
-        /* SVG Controller */
-        svg.gamepad-svg { width: 100%; max-width: 600px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.1)); }
-        .svg-bg { fill: #222; stroke: #444; stroke-width: 2; }
-        .svg-btn { fill: #111; stroke: #555; stroke-width: 2; transition: fill 0.1s, filter 0.1s; }
-        .svg-stick-base { fill: #111; stroke: #333; stroke-width: 2; }
-        .svg-stick { fill: #333; stroke: #555; stroke-width: 2; }
-        
-        /* Active States */
-        .active-a { fill: var(--btn-a) !important; filter: drop-shadow(0 0 8px var(--btn-a)); }
-        .active-b { fill: var(--btn-b) !important; filter: drop-shadow(0 0 8px var(--btn-b)); }
-        .active-x { fill: var(--btn-x) !important; filter: drop-shadow(0 0 8px var(--btn-x)); }
-        .active-y { fill: var(--btn-y) !important; filter: drop-shadow(0 0 8px var(--btn-y)); }
-        .active-generic { fill: var(--cyan) !important; filter: drop-shadow(0 0 8px var(--cyan)); }
-        
         /* Triggers & Sticks Bars */
-        .bar-container { width: 100%; background: #000; height: 15px; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #333; }
+        .bar-container { width: 100%; background: #000; height: 20px; border-radius: 4px; overflow: hidden; position: relative; border: 1px solid #333; }
         .bar-fill { height: 100%; background: var(--cyan); width: 0%; transition: width 0.05s linear; }
-        .trigger-text { position: absolute; width: 100%; text-align: center; font-size: 11px; top: -1px; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+        .trigger-text { position: absolute; width: 100%; text-align: center; font-size: 12px; top: 1px; color: #fff; font-weight: bold; text-shadow: 1px 1px 2px #000; }
         
         /* Crosshair/Graphs */
-        .stick-graph { width: 150px; height: 150px; background: #000; border-radius: 50%; border: 1px solid #444; position: relative; margin: 0 auto; }
+        .stick-graph { width: 180px; height: 180px; background: #000; border-radius: 50%; border: 1px solid #444; position: relative; margin: 0 auto; }
         .stick-axis { position: absolute; background: #333; }
         .stick-axis.x { width: 100%; height: 1px; top: 50%; }
         .stick-axis.y { width: 1px; height: 100%; left: 50%; }
-        .stick-dot { width: 10px; height: 10px; background: var(--cyan); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 5px var(--cyan); transition: top 0.05s, left 0.05s; }
+        .stick-dot { width: 12px; height: 12px; background: var(--cyan); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 5px var(--cyan); transition: top 0.05s, left 0.05s; }
         .deadzone-ring { width: 20%; height: 20%; border: 1px dashed var(--danger); border-radius: 50%; position: absolute; top: 40%; left: 40%; opacity: 0.5; }
 
         /* Health Display */
-        .health-display { text-align: center; padding: 20px 0; }
+        .health-display { text-align: center; padding: 20px 0; background: #111; border-radius: 8px; border: 1px solid #333; margin-top: 20px; }
         .health-score { font-size: 48px; font-weight: bold; }
         .health-status { font-size: 18px; font-weight: bold; margin-top: 5px; }
         
@@ -89,21 +69,22 @@
         .btn-wa { background: #25D366; color: white; }
 
         /* Status Banner */
-        #status-banner { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); padding: 10px 30px; border-radius: 20px; font-weight: bold; font-size: 14px; z-index: 100; opacity: 0; transition: opacity 0.3s; }
-        .status-connected { background: var(--success); color: #000; opacity: 1 !important; }
-        .status-disconnected { background: var(--danger); color: #fff; opacity: 1 !important; }
+        #status-banner { text-align: center; padding: 10px; font-weight: bold; font-size: 14px; background: var(--warning); color: #000; transition: background 0.3s, color 0.3s; }
+        .status-connected { background: var(--success) !important; color: #000 !important; }
+        .status-disconnected { background: var(--danger) !important; color: #fff !important; }
 
         /* Hide elements on PDF generation */
         .pdf-mode header, .pdf-mode footer, .pdf-mode #status-banner { display: none !important; }
         .pdf-mode { height: auto !important; overflow: visible !important; }
+        .pdf-mode main { flex-direction: row !important; flex-wrap: wrap; }
 
         /* QR Container */
         #qr-container { display: none; margin-top: 20px; text-align: center; }
         #qrcode { display: inline-block; padding: 10px; background: white; border-radius: 5px; }
 
-        @media (max-width: 768px) {
-            main { flex-direction: column; }
-            .side-panel { width: 100%; }
+        @media (max-width: 900px) {
+            main { flex-direction: column; align-items: center; }
+            .panel { width: 100%; max-width: 100%; }
         }
     </style>
 </head>
@@ -119,10 +100,10 @@
         </div>
     </header>
 
-    <div id="status-banner">Esperando control...</div>
+    <div id="status-banner">BUSCANDO CONTROL: Presiona cualquier botón del control para que el navegador lo detecte...</div>
 
     <main id="report-content">
-        <div class="panel side-panel">
+        <div class="panel">
             <h2>Información del Dispositivo</h2>
             <div class="info-grid">
                 <div class="info-label">Nombre:</div> <div class="info-value" id="info-name">---</div>
@@ -133,60 +114,9 @@
                 <div class="info-label">Latencia:</div> <div class="info-value" id="info-lat">0 ms</div>
             </div>
 
-            <h2>Gatillos (Triggers)</h2>
-            <div class="info-label">LT (Izquierdo)</div>
-            <div class="bar-container">
-                <div class="bar-fill" id="bar-lt"></div>
-                <div class="trigger-text" id="text-lt">0%</div>
-            </div>
-            <div class="info-label">RT (Derecho)</div>
-            <div class="bar-container">
-                <div class="bar-fill" id="bar-rt"></div>
-                <div class="trigger-text" id="text-rt">0%</div>
-            </div>
-
             <h2>Estado de Botones</h2>
-            <div id="btn-status-list" style="font-size: 12px; font-family: monospace; display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+            <div id="btn-status-list" style="font-size: 14px; font-family: monospace; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                 </div>
-        </div>
-
-        <div class="panel center-panel">
-            <svg class="gamepad-svg" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
-                <path class="svg-bg" d="M 100 50 C 30 50 10 150 50 250 C 70 290 130 250 160 200 C 180 220 320 220 340 200 C 370 250 430 290 450 250 C 490 150 470 50 400 50 Z" />
-                
-                <rect class="svg-btn" id="svg-lt" x="100" y="20" width="60" height="20" rx="5"/>
-                <rect class="svg-btn" id="svg-lb" x="100" y="45" width="60" height="15" rx="5"/>
-                <rect class="svg-btn" id="svg-rt" x="340" y="20" width="60" height="20" rx="5"/>
-                <rect class="svg-btn" id="svg-rb" x="340" y="45" width="60" height="15" rx="5"/>
-
-                <g id="svg-dpad" transform="translate(140, 150)">
-                    <rect class="svg-btn" id="svg-up" x="-10" y="-30" width="20" height="25" rx="2"/>
-                    <rect class="svg-btn" id="svg-down" x="-10" y="5" width="20" height="25" rx="2"/>
-                    <rect class="svg-btn" id="svg-left" x="-30" y="-10" width="25" height="20" rx="2"/>
-                    <rect class="svg-btn" id="svg-right" x="5" y="-10" width="25" height="20" rx="2"/>
-                    <rect class="svg-btn" x="-10" y="-10" width="20" height="20"/>
-                </g>
-
-                <g transform="translate(360, 100)">
-                    <circle class="svg-btn" id="svg-y" cx="0" cy="-25" r="12"/>
-                    <circle class="svg-btn" id="svg-a" cx="0" cy="25" r="12"/>
-                    <circle class="svg-btn" id="svg-x" cx="-25" cy="0" r="12"/>
-                    <circle class="svg-btn" id="svg-b" cx="25" cy="0" r="12"/>
-                </g>
-
-                <rect class="svg-btn" id="svg-back" x="210" y="100" width="20" height="10" rx="3"/>
-                <rect class="svg-btn" id="svg-start" x="270" y="100" width="20" height="10" rx="3"/>
-                <circle class="svg-btn" id="svg-home" cx="250" cy="70" r="12"/>
-
-                <g transform="translate(140, 90)">
-                    <circle class="svg-stick-base" cx="0" cy="0" r="30"/>
-                    <circle class="svg-stick" id="svg-ls" cx="0" cy="0" r="20"/>
-                </g>
-                <g transform="translate(360, 170)">
-                    <circle class="svg-stick-base" cx="0" cy="0" r="30"/>
-                    <circle class="svg-stick" id="svg-rs" cx="0" cy="0" r="20"/>
-                </g>
-            </svg>
 
             <div class="health-display">
                 <h2>Salud del Control</h2>
@@ -201,8 +131,21 @@
             </div>
         </div>
 
-        <div class="panel side-panel">
-            <h2>Joystick Izquierdo</h2>
+        <div class="panel">
+            <h2>Gatillos Analógicos</h2>
+            <div class="info-label" style="margin-top:10px;">LT (Gatillo Izquierdo)</div>
+            <div class="bar-container">
+                <div class="bar-fill" id="bar-lt"></div>
+                <div class="trigger-text" id="text-lt">0%</div>
+            </div>
+            
+            <div class="info-label" style="margin-top:10px;">RT (Gatillo Derecho)</div>
+            <div class="bar-container">
+                <div class="bar-fill" id="bar-rt"></div>
+                <div class="trigger-text" id="text-rt">0%</div>
+            </div>
+
+            <h2 style="margin-top: 20px;">Joystick Izquierdo</h2>
             <div class="stick-graph">
                 <div class="stick-axis x"></div>
                 <div class="stick-axis y"></div>
@@ -211,9 +154,9 @@
             </div>
             <div class="info-grid" style="margin-top: 10px;">
                 <div class="info-label">X / Y:</div> <div class="info-value" id="val-ls-xy">0.00 / 0.00</div>
-                <div class="info-label">Drift:</div> <div class="info-value" id="val-ls-drift">0.00%</div>
+                <div class="info-label">Drift Detectado:</div> <div class="info-value" id="val-ls-drift">0.00%</div>
                 <div class="info-label">Circularidad:</div> <div class="info-value" id="val-ls-circ">Calculando...</div>
-                <div class="info-label">Zona Muerta:</div> <div class="info-value">0.10</div>
+                <div class="info-label">Zona Muerta Rec.:</div> <div class="info-value">0.10</div>
             </div>
 
             <h2 style="margin-top: 20px;">Joystick Derecho</h2>
@@ -225,9 +168,9 @@
             </div>
             <div class="info-grid" style="margin-top: 10px;">
                 <div class="info-label">X / Y:</div> <div class="info-value" id="val-rs-xy">0.00 / 0.00</div>
-                <div class="info-label">Drift:</div> <div class="info-value" id="val-rs-drift">0.00%</div>
+                <div class="info-label">Drift Detectado:</div> <div class="info-value" id="val-rs-drift">0.00%</div>
                 <div class="info-label">Circularidad:</div> <div class="info-value" id="val-rs-circ">Calculando...</div>
-                <div class="info-label">Zona Muerta:</div> <div class="info-value">0.10</div>
+                <div class="info-label">Zona Muerta Rec.:</div> <div class="info-value">0.10</div>
             </div>
         </div>
     </main>
@@ -245,7 +188,6 @@
         let isTechMode = true;
         let audioCtx = null;
         
-        // Métricas de análisis
         let lastTime = performance.now();
         let frameCount = 0;
         let pollingRate = 0;
@@ -256,32 +198,24 @@
         let currentHealth = 100;
         let healthLabel = "";
 
-        // Nombres estándar de botones (Standard Gamepad Mapping)
         const btnNames = [
             "A", "B", "X", "Y", "LB", "RB", "LT", "RT", 
             "BACK", "START", "L3", "R3", "UP", "DOWN", "LEFT", "RIGHT", "HOME"
         ];
-        
-        // Mapeo de IDs SVG
-        const svgMap = {
-            0: 'svg-a', 1: 'svg-b', 2: 'svg-x', 3: 'svg-y',
-            4: 'svg-lb', 5: 'svg-rb', 6: 'svg-lt', 7: 'svg-rt',
-            8: 'svg-back', 9: 'svg-start', 10: 'svg-ls', 11: 'svg-rs',
-            12: 'svg-up', 13: 'svg-down', 14: 'svg-left', 15: 'svg-right', 16: 'svg-home'
-        };
 
-        // Estado anterior de botones para sonido
         let prevBtnState = new Array(17).fill(false);
 
         // Generar lista de botones en UI
         const btnListContainer = document.getElementById('btn-status-list');
         btnNames.forEach((name, i) => {
-            btnListContainer.innerHTML += `<div><span style="color:var(--text-muted)">${name}:</span> <span id="btn-txt-${i}" style="color:white">Liberado</span></div>`;
+            btnListContainer.innerHTML += `<div style="padding: 5px; background: #000; border: 1px solid #333; border-radius: 4px; display: flex; justify-content: space-between;">
+                <span style="color:var(--text-muted); font-weight:bold;">${name}</span> 
+                <span id="btn-txt-${i}" style="color:white">Liberado</span>
+            </div>`;
         });
 
-        // Generar QR Base
         const qrCode = new QRCode(document.getElementById("qrcode"), {
-            text: "XE CONTROL TESTER PRO - Análisis Completo",
+            text: "XE CONTROL TESTER PRO",
             width: 128,
             height: 128,
             colorDark : "#00ffff",
@@ -318,9 +252,8 @@
         function toggleMode() {
             isTechMode = !isTechMode;
             document.getElementById('btn-mode').innerText = `Modo: ${isTechMode ? 'TÉCNICO' : 'CLIENTE'}`;
-            // En modo cliente simplificamos la vista ocultando valores crudos
             const detailElements = document.querySelectorAll('.info-grid, .stick-graph');
-            detailElements.forEach(el => el.style.opacity = isTechMode ? '1' : '0.3');
+            detailElements.forEach(el => el.style.opacity = isTechMode ? '1' : '0.4');
         }
 
         function toggleFullScreen() {
@@ -333,8 +266,7 @@
 
         function closeApp() {
             if(confirm("¿Deseas cerrar el tester? No se guardará ninguna información.")) {
-                window.close(); // Funciona si se abrió por script, sino:
-                document.body.innerHTML = "<h1 style='text-align:center; margin-top:20vh; color:var(--cyan)'>SESIÓN FINALIZADA</h1><p style='text-align:center'>Puede cerrar esta pestaña.</p>";
+                document.body.innerHTML = "<h1 style='text-align:center; margin-top:40vh; color:var(--cyan)'>SESIÓN FINALIZADA</h1><p style='text-align:center'>Puede cerrar esta pestaña.</p>";
             }
         }
 
@@ -342,23 +274,38 @@
             const banner = document.getElementById('status-banner');
             banner.innerText = text;
             banner.className = `status-${type}`;
-            setTimeout(() => banner.className = '', 3000);
         }
 
-        // --- EVENTOS GAMEPAD API ---
+        // --- CONEXIÓN DE GAMEPAD (POLLING + EVENTOS) ---
+        function scanGamepads() {
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            for (let i = 0; i < gamepads.length; i++) {
+                if (gamepads[i] && gamepadIndex !== gamepads[i].index) {
+                    gamepadIndex = gamepads[i].index;
+                    showStatus(`Control Conectado: ${gamepads[i].id.substring(0,35)}`, 'connected');
+                    if(soundEnabled) playBeep(800, 'square', 0.1);
+                    extractDeviceInfo(gamepads[i]);
+                    if (!animationFrameId) loop();
+                    return;
+                }
+            }
+        }
+
+        // Intervalo para forzar detección si el evento falla o no se dispara
+        setInterval(() => {
+            if (gamepadIndex === null) scanGamepads();
+        }, 500);
+
         window.addEventListener("gamepadconnected", (e) => {
-            gamepadIndex = e.gamepad.index;
-            showStatus(`Control Conectado: ${e.gamepad.id.substring(0,25)}...`, 'connected');
-            if(soundEnabled) playBeep(800, 'square', 0.1);
-            extractDeviceInfo(e.gamepad);
-            loop();
+            scanGamepads(); // Usa el escáner centralizado
         });
 
         window.addEventListener("gamepaddisconnected", (e) => {
             if (e.gamepad.index === gamepadIndex) {
                 gamepadIndex = null;
                 cancelAnimationFrame(animationFrameId);
-                showStatus("Control Desconectado", 'disconnected');
+                animationFrameId = null;
+                showStatus("Control Desconectado - Presiona un botón para reconectar", 'disconnected');
                 document.getElementById('info-name').innerText = "---";
                 resetUI();
             }
@@ -369,9 +316,85 @@
             document.getElementById('info-name').innerText = gp.id;
             document.getElementById('info-axes-btns').innerText = `${gp.axes.length} / ${gp.buttons.length}`;
             
-            // Intento de extracción de VID/PID estándar en Chromium/Firefox
             const vidMatch = gp.id.match(/(Vendor: |v)([0-9a-fA-F]{4})/i) || gp.id.match(/^([0-9a-fA-F]{4})-/);
             const pidMatch = gp.id.match(/(Product: |p)([0-9a-fA-F]{4})/i) || gp.id.match(/-([0-9a-fA-F]{4})-/);
             
             const vid = vidMatch ? vidMatch[vidMatch.length-1].toUpperCase() : "DESC";
-            const pid = pidMatch ? pidMatch[pidMatch.length-1]
+            const pid = pidMatch ? pidMatch[pidMatch.length-1].toUpperCase() : "DESC";
+            
+            document.getElementById('info-vidpid').innerText = `${vid} / ${pid}`;
+            document.getElementById('info-conn').innerText = gp.connected ? "Activa" : "Inactiva";
+        }
+
+        function calculateHealth() {
+            let h = 100;
+            if(driftLS > 0.08) h -= (driftLS * 100);
+            if(driftRS > 0.08) h -= (driftRS * 100);
+            
+            h = Math.max(0, Math.round(h));
+            currentHealth = h;
+
+            const healthEl = document.getElementById('health-score');
+            const statusEl = document.getElementById('health-status');
+            const recsEl = document.getElementById('health-recs');
+
+            healthEl.innerText = `${h}%`;
+
+            if(h >= 95) {
+                healthEl.style.color = "var(--success)";
+                statusEl.innerText = "🟢 EXCELENTE";
+                healthLabel = "EXCELENTE";
+                recsEl.innerText = "Control en óptimas condiciones.";
+            } else if (h >= 85) {
+                healthEl.style.color = "var(--success)";
+                statusEl.innerText = "🟢 APROBADO";
+                healthLabel = "APROBADO";
+                recsEl.innerText = "Desgaste normal detectado. Operable.";
+            } else if (h >= 70) {
+                healthEl.style.color = "var(--warning)";
+                statusEl.innerText = "🟡 REQUIERE RECALIBRACIÓN";
+                healthLabel = "REQUIERE RECALIBRACIÓN";
+                recsEl.innerText = "Drift notable. Se sugiere recalibrar módulos.";
+            } else {
+                healthEl.style.color = "var(--danger)";
+                statusEl.innerText = "🔴 REQUIERE REPARACIÓN";
+                healthLabel = "REQUIERE REPARACIÓN";
+                recsEl.innerText = "Daño crítico en componentes (Drift extremo).";
+            }
+        }
+
+        function loop() {
+            if (gamepadIndex === null) return;
+            const gp = navigator.getGamepads()[gamepadIndex];
+            if (!gp) {
+                gamepadIndex = null;
+                return;
+            }
+
+            // Polling Rate
+            frameCount++;
+            const now = performance.now();
+            const delta = now - lastTime;
+            if (delta >= 1000) {
+                pollingRate = Math.round((frameCount * 1000) / delta);
+                document.getElementById('info-hz').innerText = `${pollingRate} Hz`;
+                document.getElementById('info-lat').innerText = `${(1000/pollingRate).toFixed(1)} ms`;
+                frameCount = 0;
+                lastTime = now;
+                calculateHealth();
+            }
+
+            // --- BOTONES ---
+            gp.buttons.forEach((b, i) => {
+                const val = typeof b === "object" ? b.value : b;
+                const pressed = typeof b === "object" ? b.pressed : b > 0;
+                
+                if (pressed && !prevBtnState[i]) playBeep(400 + (i*20));
+                prevBtnState[i] = pressed;
+
+                if(i < btnNames.length) {
+                    const txtEl = document.getElementById(`btn-txt-${i}`);
+                    const parentDiv = txtEl.parentElement;
+                    if(pressed) {
+                        txtEl.innerText = val < 1 && val > 0 ? `Presionado (${(val*100).toFixed(0)}%)` : "PRESIONADO";
+    
