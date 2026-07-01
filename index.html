@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XE Control Tester - Diagnóstico Avanzado</title>
+    <title>XE Control Tester PRO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --cyan-bright: #00f0ff;
@@ -12,6 +13,13 @@
             --white: #ffffff;
             --gray: #2a353c;
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --color-a: #00ff00;
+            --color-b: #ff0000;
+            --color-x: #0088ff;
+            --color-y: #ffff00;
+            --color-ok: #00ff00;
+            --color-warn: #ffff00;
+            --color-err: #ff0000;
         }
 
         body {
@@ -24,6 +32,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Estilos del Logotipo XE CONTROL TESTER */
@@ -53,7 +62,6 @@
             position: relative;
         }
 
-        /* Hexágono CSS */
         .logo-hexagon svg {
             position: absolute;
             width: 100%;
@@ -68,7 +76,7 @@
             font-weight: 900;
             color: var(--white);
             z-index: 1;
-            font-family: 'Arial Black', Gadget, sans-serif; /* Fuente más gruesa para las letras principales */
+            font-family: 'Arial Black', Gadget, sans-serif;
             text-shadow: 0 0 10px var(--cyan-bright);
         }
 
@@ -98,6 +106,23 @@
             margin-top: 2px;
         }
 
+        .pro-badge {
+            background: var(--cyan-bright);
+            color: var(--bg-dark);
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 14px;
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% { box-shadow: 0 0 5px var(--cyan-bright); }
+            50% { box-shadow: 0 0 15px var(--cyan-bright); }
+            100% { box-shadow: 0 0 5px var(--cyan-bright); }
+        }
+
         .connect-alert {
             color: var(--cyan-bright);
             font-size: 1.1rem;
@@ -112,30 +137,21 @@
             100% { opacity: 0.4; }
         }
 
-        /* Resto de la interfaz */
         .tester-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 15px;
             width: 100%;
             max-width: 1100px;
             padding-bottom: 30px;
         }
 
-        /* Optimización para móviles */
-        @media (max-width: 600px) {
-            .brand-header {
-                justify-content: center;
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
+        @media (min-width: 800px) {
+            .tester-container {
+                grid-template-columns: 1fr 1fr;
             }
-            .logo-container {
-                flex-direction: column;
-                gap: 5px;
-            }
-            .logo-text-wrapper {
-                align-items: center;
+            .full-width {
+                grid-column: span 2;
             }
         }
 
@@ -144,7 +160,8 @@
             border: 1px solid var(--cyan-dark);
             border-radius: 8px;
             padding: 15px;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
+            transition: all 0.3s ease;
         }
 
         .card h2 {
@@ -157,101 +174,189 @@
             letter-spacing: 1px;
         }
 
-        /* Joysticks Visualizer */
-        .joystick-area {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-        }
-
-        .stick-viewer {
-            width: 110px;
-            height: 110px;
-            border: 2px solid var(--white);
-            border-radius: 50%;
-            position: relative;
-            background: radial-gradient(circle, transparent 60%, rgba(0,240,255,0.05) 100%);
-        }
-
-        .deadzone-ring {
-            width: 22px; 
-            height: 22px;
-            border: 1px dashed var(--cyan-bright);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .stick-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--cyan-bright);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 8px var(--cyan-bright);
-            transition: transform 0.05s linear;
-        }
-
-        /* Buttons Grid */
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .btn-ui {
-            background: transparent;
-            border: 1px solid var(--white);
-            color: var(--white);
-            padding: 8px 2px;
-            text-align: center;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
-        .btn-ui.active {
-            background: var(--cyan-bright);
-            color: var(--bg-dark);
-            border-color: var(--cyan-bright);
-            box-shadow: 0 0 10px var(--cyan-bright);
-        }
-
-        /* Osciloscopio Canvas */
-        .osc-container {
-            width: 100%;
-            margin-top: 10px;
-        }
-        canvas {
-            width: 100%;
-            height: 100px;
-            background-color: #05080a;
-            border: 1px solid var(--gray);
-            border-radius: 4px;
-            display: block;
-        }
-
-        /* Stats */
         .stat-line {
             display: flex;
             justify-content: space-between;
             margin: 6px 0;
             font-family: monospace;
             font-size: 0.9rem;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            padding-bottom: 4px;
         }
         .stat-val {
             color: var(--cyan-bright);
             font-weight: bold;
+            text-align: right;
         }
+
+        /* Progreso / Barras */
+        .progress-container {
+            width: 100%;
+            background-color: var(--gray);
+            border-radius: 4px;
+            margin-top: 5px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--cyan-bright);
+            transition: width 0.1s, background-color 0.3s;
+        }
+
+        /* SVG Controller Area */
+        .controller-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 70%);
+            border: 1px solid var(--gray);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .controller-svg {
+            max-width: 100%;
+            height: auto;
+            width: 500px;
+            filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.2));
+        }
+
+        .svg-btn { fill: #333; stroke: #555; stroke-width: 2; transition: fill 0.1s; }
+        .svg-body { fill: #1a1f24; stroke: var(--cyan-dark); stroke-width: 3; }
+        .svg-stick-base { fill: #111; stroke: #333; stroke-width: 2; }
+        .svg-stick { fill: #2a353c; stroke: var(--cyan-bright); stroke-width: 2; transition: transform 0.05s linear; }
+        .svg-trigger-bg { fill: #111; stroke: #333; }
+        .svg-trigger-fill { fill: var(--cyan-bright); transition: height 0.05s linear, y 0.05s linear; }
+
+        .btn-finish-test {
+            background: var(--cyan-bright);
+            color: var(--bg-dark);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-finish-test:hover {
+            background: var(--white);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            border: 2px solid var(--cyan-bright);
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .modal-title {
+            color: var(--cyan-bright);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .modal-score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+            font-family: 'Arial Black', sans-serif;
+        }
+
+        .modal-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .modal-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .m-btn {
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-pdf { background: #e74c3c; color: white; }
+        .btn-wa { background: #25D366; color: white; }
+        .btn-close { background: transparent; border: 1px solid var(--gray); color: var(--white); }
+
+        .m-btn:hover { filter: brightness(1.2); }
+
+        /* Reporte Oculto para PDF */
+        #pdf-report {
+            display: none;
+            background: white;
+            color: black;
+            padding: 40px;
+            width: 800px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .pdf-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid #008b9b;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .pdf-header h1 { margin: 0; color: #0a0f12; font-size: 28px; }
+        .pdf-header p { margin: 5px 0 0 0; color: #555; }
+        
+        .pdf-section { margin-bottom: 25px; }
+        .pdf-section h3 { background: #008b9b; color: white; padding: 8px 15px; margin: 0 0 15px 0; border-radius: 4px; }
+        
+        .pdf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pdf-item { border-bottom: 1px solid #eee; padding: 5px 0; display: flex; justify-content: space-between; }
+        .pdf-item strong { color: #333; }
+        
+        .pdf-result-box {
+            text-align: center; padding: 20px; border-radius: 8px; margin-top: 20px;
+            border: 2px solid #ccc;
+        }
+        .pdf-qr { text-align: center; margin-top: 40px; font-size: 12px; color: #777;}
     </style>
 </head>
 <body>
@@ -265,8 +370,8 @@
                 <span class="logo-letters-xe">XE</span>
             </div>
             <div class="logo-text-wrapper">
-                <h1 class="main-brand-name">Control Tester</h1>
-                <span class="sub-brand-name">Diagnostic</span>
+                <h1 class="main-brand-name">Control Tester <span class="pro-badge">PRO</span></h1>
+                <span class="sub-brand-name">Diagnóstico Avanzado</span>
             </div>
         </div>
     </header>
@@ -276,5 +381,135 @@
     <div class="tester-container" id="tester-ui" style="display: none;">
         
         <div class="card">
-            <h2>Rendimiento</h2>
-            <div class="stat-line"><span>ID:</span> <span id="gamepad-id" class="stat-val"
+            <h2>Información del Dispositivo</h2>
+            <div class="stat-line"><span>Nombre:</span> <span id="gp-name" class="stat-val">---</span></div>
+            <div class="stat-line"><span>Modelo ID:</span> <span id="gp-id" class="stat-val">---</span></div>
+            <div class="stat-line"><span>Índice:</span> <span id="gp-index" class="stat-val">---</span></div>
+            <div class="stat-line"><span>Conexión:</span> <span id="gp-mapping" class="stat-val">---</span></div>
+            <div class="stat-line"><span>Botones:</span> <span id="gp-buttons" class="stat-val">0</span></div>
+            <div class="stat-line"><span>Ejes (Axes):</span> <span id="gp-axes" class="stat-val">0</span></div>
+            <div class="stat-line"><span>Estado:</span> <span id="gp-status" class="stat-val" style="color: var(--color-ok)">Conectado</span></div>
+        </div>
+
+        <div class="card">
+            <h2>Diagnóstico Automático</h2>
+            
+            <div class="stat-line"><span>Drift Izquierdo:</span> <span id="diag-drift-l" class="stat-val">0.0%</span></div>
+            <div class="progress-container"><div id="prog-drift-l" class="progress-bar" style="width: 0%;"></div></div>
+            
+            <div class="stat-line" style="margin-top: 15px;"><span>Drift Derecho:</span> <span id="diag-drift-r" class="stat-val">0.0%</span></div>
+            <div class="progress-container"><div id="prog-drift-r" class="progress-bar" style="width: 0%;"></div></div>
+
+            <div class="stat-line" style="margin-top: 15px;"><span>Circularidad Max (L / R):</span> <span id="diag-circ" class="stat-val">0% / 0%</span></div>
+            
+            <div class="stat-line" style="margin-top: 15px;"><span>Zona Muerta Recomendada:</span> <span id="diag-dz" class="stat-val">Calculando...</span></div>
+
+            <div class="stat-line" style="margin-top: 15px; font-size: 1.1rem;"><span>Salud General:</span> <span id="diag-health" class="stat-val">100%</span></div>
+            <div class="progress-container" style="height: 15px;"><div id="prog-health" class="progress-bar" style="width: 100%; background-color: var(--color-ok);"></div></div>
+        </div>
+
+        <div class="card full-width">
+            <h2>Control Interactivo</h2>
+            <div class="controller-visualizer">
+                <svg class="controller-svg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                    <path class="svg-body" d="M 150 100 C 50 100, 20 200, 50 350 C 70 450, 150 450, 220 350 C 250 300, 350 280, 400 280 C 450 280, 550 300, 580 350 C 650 450, 730 450, 750 350 C 780 200, 750 100, 650 100 Z" />
+                    
+                    <rect class="svg-trigger-bg" x="100" y="30" width="100" height="40" rx="10" />
+                    <rect id="svg-lt" class="svg-trigger-fill" x="100" y="70" width="100" height="0" rx="10" />
+                    <text x="150" y="20" fill="white" font-size="16" text-anchor="middle">LT</text>
+
+                    <rect class="svg-trigger-bg" x="600" y="30" width="100" height="40" rx="10" />
+                    <rect id="svg-rt" class="svg-trigger-fill" x="600" y="70" width="100" height="0" rx="10" />
+                    <text x="650" y="20" fill="white" font-size="16" text-anchor="middle">RT</text>
+
+                    <path id="svg-lb" class="svg-btn" d="M 120 75 Q 150 60 250 85 L 230 110 Q 150 90 120 100 Z" />
+                    <path id="svg-rb" class="svg-btn" d="M 680 75 Q 650 60 550 85 L 570 110 Q 650 90 680 100 Z" />
+
+                    <g transform="translate(260, 280)">
+                        <rect class="svg-btn" x="-15" y="-15" width="30" height="30" fill="#222" stroke="none"/>
+                        <path id="svg-dup" class="svg-btn" d="M -15 -15 L 15 -15 L 15 -50 Q 0 -60 -15 -50 Z" />
+                        <path id="svg-ddown" class="svg-btn" d="M -15 15 L 15 15 L 15 50 Q 0 60 -15 50 Z" />
+                        <path id="svg-dleft" class="svg-btn" d="M -15 -15 L -15 15 L -50 15 Q -60 0 -50 -15 Z" />
+                        <path id="svg-dright" class="svg-btn" d="M 15 -15 L 15 15 L 50 15 Q 60 0 50 -15 Z" />
+                    </g>
+
+                    <g transform="translate(600, 200)">
+                        <circle id="svg-b-y" class="svg-btn" cx="0" cy="-45" r="18" />
+                        <text x="0" y="-39" fill="white" font-size="18" text-anchor="middle" font-weight="bold">Y</text>
+
+                        <circle id="svg-b-a" class="svg-btn" cx="0" cy="45" r="18" />
+                        <text x="0" y="51" fill="white" font-size="18" text-anchor="middle" font-weight="bold">A</text>
+
+                        <circle id="svg-b-x" class="svg-btn" cx="-45" cy="0" r="18" />
+                        <text x="-45" y="6" fill="white" font-size="18" text-anchor="middle" font-weight="bold">X</text>
+
+                        <circle id="svg-b-b" class="svg-btn" cx="45" cy="0" r="18" />
+                        <text x="45" y="6" fill="white" font-size="18" text-anchor="middle" font-weight="bold">B</text>
+                    </g>
+
+                    <circle id="svg-home" class="svg-btn" cx="400" cy="150" r="20" />
+                    <rect id="svg-back" class="svg-btn" x="320" y="180" width="25" height="15" rx="5" />
+                    <rect id="svg-start" class="svg-btn" x="455" y="180" width="25" height="15" rx="5" />
+
+                    <g transform="translate(200, 180)">
+                        <circle class="svg-stick-base" cx="0" cy="0" r="50" />
+                        <circle id="svg-stick-l" class="svg-stick" cx="0" cy="0" r="35" />
+                        <circle id="svg-l3" class="svg-btn" cx="0" cy="0" r="10" fill="transparent" stroke="none" />
+                    </g>
+
+                    <g transform="translate(540, 300)">
+                        <circle class="svg-stick-base" cx="0" cy="0" r="50" />
+                        <circle id="svg-stick-r" class="svg-stick" cx="0" cy="0" r="35" />
+                        <circle id="svg-r3" class="svg-btn" cx="0" cy="0" r="10" fill="transparent" stroke="none" />
+                    </g>
+                </svg>
+            </div>
+            
+            <button class="btn-finish-test" onclick="finishTest()">Finalizar Prueba</button>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">Resultado del Diagnóstico</h2>
+            
+            <div id="modal-score-txt" class="modal-score">100%</div>
+            <div id="modal-status-txt" class="modal-status">🟢 EXCELENTE</div>
+            
+            <p id="modal-obs" style="color: #aaa; margin-bottom: 20px; font-size: 0.9rem;"></p>
+
+            <div class="modal-btns">
+                <button class="m-btn btn-pdf" onclick="generatePDF()">📄 Generar PDF</button>
+                <button class="m-btn btn-wa" onclick="sendToWorkshop()">📤 Enviar al Taller XE</button>
+                <button class="m-btn btn-close" onclick="closeModal()">❌ Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdf-report">
+        <div class="pdf-header">
+            <div style="flex-grow: 1;">
+                <h1>XE CONTROL TESTER PRO</h1>
+                <p>Reporte de Diagnóstico Oficial</p>
+            </div>
+            <div style="text-align: right;">
+                <strong id="pdf-date"></strong><br>
+                <span id="pdf-time"></span>
+            </div>
+        </div>
+
+        <div class="pdf-section">
+            <h3>Datos del Control</h3>
+            <div class="pdf-grid">
+                <div class="pdf-item"><span>Nombre:</span> <strong id="pdf-name">---</strong></div>
+                <div class="pdf-item"><span>Modelo / ID:</span> <strong id="pdf-id">---</strong></div>
+                <div class="pdf-item"><span>VID:</span> <strong id="pdf-vid">N/A</strong></div>
+                <div class="pdf-item"><span>PID:</span> <strong id="pdf-pid">N/A</strong></div>
+            </div>
+        </div>
+
+        <div class="pdf-section">
+            <h3>Métricas de Joysticks</h3>
+            <div class="pdf-grid">
+                <div class="pdf-item"><span>Drift Izquierdo (Máx Reposo):</span> <strong id="pdf-dl">0.0%</strong></div>
+                <div class="pdf-item"><span>Drift Derecho (Máx Reposo):</
