@@ -1,1 +1,0 @@
-# Tester-de-funcionalidad-controles
